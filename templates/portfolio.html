@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Aum Creations</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✂️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:wght@400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/shared.css">
+    <style>
+        .portfolio-section{padding:80px 5%;max-width:1400px;margin:0 auto}
+        .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:2rem}
+        .portfolio-item{position:relative;height:290px;border-radius:12px;overflow:hidden;cursor:pointer}
+        .portfolio-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+        .portfolio-item:hover img{transform:scale(1.08)}
+        .portfolio-item::before{content:'';position:absolute;inset:0;background:rgba(107,85,53,.78);z-index:2;opacity:0;transition:opacity .3s}
+        .portfolio-item:hover::before{opacity:1}
+        .portfolio-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;opacity:0;transition:opacity .3s}
+        .portfolio-item:hover .portfolio-overlay{opacity:1}
+        .portfolio-overlay-content{text-align:center;color:var(--white)}
+        .portfolio-overlay-content h3{font-family:'Playfair Display',serif;font-size:1.7rem;margin-bottom:.4rem}
+        .portfolio-overlay-content p{font-family:'Poppins',sans-serif;opacity:.9;margin-bottom:.8rem}
+        .portfolio-wa-btn{display:inline-flex;align-items:center;gap:.4rem;background:#25d366;color:var(--white);text-decoration:none;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;padding:.45rem 1.1rem;border-radius:20px;transition:background .3s}
+        .portfolio-wa-btn:hover{background:#1da851}
+        .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;align-items:center;justify-content:center}
+        .lightbox.active{display:flex}
+        .lightbox-content{max-width:90vw;max-height:90vh;position:relative;text-align:center}
+        .lightbox-content img{max-width:100%;max-height:80vh;border-radius:8px;object-fit:contain}
+        .lightbox-close{position:absolute;top:-40px;right:0;color:var(--white);font-size:2rem;cursor:pointer;background:none;border:none;line-height:1}
+        .lightbox-caption{color:var(--white);font-family:'Poppins',sans-serif;margin-top:1rem;font-size:.95rem;opacity:.85}
+        .loading{text-align:center;padding:3rem;color:var(--primary);font-family:'Poppins',sans-serif}
+        .loading i{font-size:2rem;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* Video Section */
+        .video-section{padding:70px 5%;background:var(--light);max-width:1400px;margin:0 auto}
+        .video-section-title{text-align:center;margin-bottom:2.5rem}
+        .video-section-title h2{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--primary);margin-bottom:.6rem}
+        .video-section-title p{font-family:'Poppins',sans-serif;color:#888;font-size:1rem}
+        .video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+        .video-card{border-radius:14px;overflow:hidden;background:var(--white);box-shadow:0 4px 20px rgba(107,85,53,.12);transition:transform .3s,box-shadow .3s}
+        .video-card:hover{transform:translateY(-6px);box-shadow:0 10px 35px rgba(107,85,53,.22)}
+        .video-card video{width:100%;display:block;max-height:380px;object-fit:cover;background:#000}
+        .video-card-label{padding:.9rem 1.1rem;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;color:var(--primary)}
+        @media(max-width:600px){.video-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body class="lang-en" id="bodyEl">
+
+<header>
+    <nav>
+        <a href="/" class="logo"><img src="/static/images/logo.png" alt="Aum Creation Boutique Logo"><div class="logo-text">Aum Creations<span>Creation Boutique</span></div></a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/"><span class="en">Home</span><span class="hi">होम</span></a></li>
+            <li><a href="/about"><span class="en">About</span><span class="hi">हमारे बारे में</span></a></li>
+            <li><a href="/services"><span class="en">Services</span><span class="hi">सेवाएं</span></a></li>
+            <li><a href="/portfolio"><span class="en">Portfolio</span><span class="hi">पोर्टफोलियो</span></a></li>
+            <li><a href="/contact"><span class="en">Contact</span><span class="hi">संपर्क</span></a></li>
+            <li><button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i><span id="langLabel">हिंदी</span></button></li>
+            <li><a href="/contact" class="cta-btn"><span class="en">Book Appointment</span><span class="hi">अपॉइंटमेंट बुक करें</span></a></li>
+        </ul>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+    </nav>
+</header>
+
+<div class="page-hero">
+    <h1><span class="en">Our Portfolio</span><span class="hi">हमारा पोर्टफोलियो</span></h1>
+    <p><span class="en">A showcase of our finest work — click any image to enlarge</span><span class="hi">हमारे बेहतरीन काम की झलक</span></p>
+</div>
+
+<section class="portfolio-section">
+    <div class="portfolio-grid" id="portfolioGrid">
+        <div class="loading"><i class="fas fa-spinner"></i><p style="margin-top:1rem">Loading portfolio...</p></div>
+    </div>
+</section>
+
+<!-- VIDEO SHOWCASE -->
+<section style="background:var(--light);padding-bottom:0">
+<div class="video-section">
+    <div class="video-section-title">
+        <h2><span class="en">Design in Motion</span><span class="hi">डिज़ाइन इन मोशन</span></h2>
+        <p><span class="en">Watch our craftsmanship come to life</span><span class="hi">हमारी कारीगरी को जीवंत होते देखें</span></p>
+    </div>
+    <div class="video-grid">
+        <div class="video-card">
+            <video controls playsinline preload="metadata" poster="">
+                <source src="/static/videos/video1.mp4" type="video/mp4">
+            </video>
+            <div class="video-card-label"><i class="fas fa-scissors" style="color:var(--accent);margin-right:.4rem"></i> <span class="en">Boutique Showcase</span><span class="hi">बुटीक शोकेस</span></div>
+        </div>
+        <div class="video-card">
+            <video controls playsinline preload="metadata">
+                <source src="/static/videos/video2.mp4" type="video/mp4">
+            </video>
+            <div class="video-card-label"><i class="fas fa-scissors" style="color:var(--accent);margin-right:.4rem"></i> <span class="en">Our Creations</span><span class="hi">हमारी रचनाएं</span></div>
+        </div>
+        <div class="video-card">
+            <video controls playsinline preload="metadata">
+                <source src="/static/videos/video3.mp4" type="video/mp4">
+            </video>
+            <div class="video-card-label"><i class="fas fa-scissors" style="color:var(--accent);margin-right:.4rem"></i> <span class="en">Fashion Forward</span><span class="hi">फैशन फॉरवर्ड</span></div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <img id="lbImg" src="" alt="">
+        <p class="lightbox-caption" id="lbCap"></p>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; <span id="yr"></span> Aum Creations. All rights reserved.</p>
+    <div class="footer-bottom">
+        <p>Premium Stitching &amp; Tailoring Services | Ludhiana, Punjab</p>
+        <div class="footer-links">
+            <a href="/">Home</a><a href="/about">About</a><a href="/services">Services</a>
+            <a href="/portfolio">Portfolio</a><a href="/contact">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<div class="sticky-contact">
+    <a href="#" onclick="return openWA('Hello Aum Creations!')" class="sticky-btn whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
+    <a href="tel:+91 92172 97800" class="sticky-btn call-btn"><i class="fas fa-phone"></i></a>
+    <div class="sticky-btn scroll-to-top" id="scrollToTop"><i class="fas fa-arrow-up"></i></div>
+</div>
+
+<script src="/static/js/shared.js"></script>
+<script>
+// Portfolio items using uploaded images
+const fallbackPortfolio = [
+    { title:'Vest & Wide-Leg Set', description:'Chic 3-piece tailored co-ord set', imageUrl:'images/design1.jpg', msg:'Hi! I love the Vest & Wide-Leg Set in your portfolio. Please share details.' },
+    { title:'Embellished Party Dress', description:'Elegant V-neck dress with flutter sleeves', imageUrl:'images/design2.jpg', msg:'Hi! I am interested in the Embellished Party Dress. Please share details.' },
+    { title:'Classic Shirt Dress', description:'Casual chic button-down shirt dress', imageUrl:'images/design3.jpg', msg:'Hi! I love the Classic Shirt Dress in your portfolio. Please enquire.' },
+    { title:'Plaid Longline Shirt', description:'Trendy oversized checked tunic', imageUrl:'images/design4.jpg', msg:'Hi! I am interested in the Plaid Longline Shirt design. Please share details.' },
+    { title:'Striped Jumpsuit', description:'Flowy wide-leg jumpsuit with flutter sleeves', imageUrl:'images/design5.jpg', msg:'Hi! I love the Striped Jumpsuit. Please share details.' },
+    { title:'Asymmetric Cape Dress', description:'Dramatic V-neck dress with cape sleeves', imageUrl:'images/design6.jpg', msg:'Hi! I am interested in the Asymmetric Cape Dress. Please share details.' },
+    { title:'Utility Jumpsuit', description:'Smart casual wide-leg jumpsuit', imageUrl:'images/design7.jpg', msg:'Hi! I love the Utility Jumpsuit in your portfolio. Please share details.' },
+    { title:'Linen Pinafore Dress', description:'Breezy button-front mini with pockets', imageUrl:'images/design8.jpg', msg:'Hi! I love the Linen Pinafore Dress. Please share details.' },
+    { title:'Asymmetric Blazer Vest', description:'Structured sleeveless blazer top', imageUrl:'images/design9.jpg', msg:'Hi! I am interested in the Asymmetric Blazer Vest. Please share details.' },
+    { title:'High-Waist Wide Trousers', description:'Elegant palazzo-style wide-leg pants', imageUrl:'images/design10.jpg', msg:'Hi! I love the High-Waist Wide Trousers. Please share details.' },
+    { title:'One-Shoulder Evening Gown', description:'Dramatic floor-length formal dress', imageUrl:'images/design11.jpg', msg:'Hi! I am interested in the One-Shoulder Evening Gown. Please share details.' },
+    { title:'Ruffle-Strap Jumpsuit', description:'Casual wide-leg jumpsuit with flutter straps', imageUrl:'images/design12.jpg', msg:'Hi! I love the Ruffle-Strap Jumpsuit. Please share details.' },
+    { title:'Belted Wide-Leg Jumpsuit', description:'Chic flutter-sleeve jumpsuit with belt', imageUrl:'images/design13.jpg', msg:'Hi! I am interested in the Belted Wide-Leg Jumpsuit. Please share details.' },
+    { title:'Olive Tie-Waist Jumpsuit', description:'Flowing godet-sleeve slim jumpsuit', imageUrl:'images/design14.jpg', msg:'Hi! I love the Olive Tie-Waist Jumpsuit. Please share details.' },
+    { title:'Safari Short Romper', description:'Utility-style sleeveless romper', imageUrl:'images/design15.jpg', msg:'Hi! I am interested in the Safari Short Romper. Please share details.' },
+    { title:'Cross-Neck Colorblock Maxi', description:'Elegant halter maxi with color panels', imageUrl:'images/design16.jpg', msg:'Hi! I love the Cross-Neck Colorblock Maxi. Please share details.' },
+    { title:'Wrap-Front Mini Dress', description:'Structured A-line dress with contrast trim', imageUrl:'images/design17.jpg', msg:'Hi! I am interested in the Wrap-Front Mini Dress. Please share details.' },
+    { title:'Denim Shift Dress', description:'Casual short-sleeve denim dress', imageUrl:'images/design18.jpg', msg:'Hi! I love the Denim Shift Dress. Please share details.' },
+    { title:'Halter One-Shoulder Set', description:'Dramatic asymmetric top with wide pants', imageUrl:'images/design19.jpg', msg:'Hi! I am interested in the Halter One-Shoulder Set. Please share details.' },
+    { title:'Pleated Mandarin Dress', description:'Elegant sleeveless button-front midi', imageUrl:'images/design20.jpg', msg:'Hi! I love the Pleated Mandarin Dress. Please share details.' },
+    { title:'Tie-Strap Floral Jumpsuit', description:'Vibrant wide-leg jumpsuit with bow straps', imageUrl:'images/design21.jpg', msg:'Hi! I am interested in the Tie-Strap Floral Jumpsuit. Please share details.' },
+    { title:'Ruffle Mermaid Dress', description:'Dramatic ruched evening gown with tiered hem', imageUrl:'images/design22.jpg', msg:'Hi! I love the Ruffle Mermaid Dress. Please share details.' },
+    { title:'Knot-Front Asymmetric Dress', description:'Boho denim dress with front knot detail', imageUrl:'images/design23.jpg', msg:'Hi! I am interested in the Knot-Front Asymmetric Dress. Please share details.' },
+    { title:'Striped Handkerchief Maxi', description:'Bold stripe maxi with asymmetric hem', imageUrl:'images/design24.jpg', msg:'Hi! I love the Striped Handkerchief Maxi. Please share details.' },
+    { title:'One-Shoulder Tropical Maxi', description:'Tropical print maxi with ruffle shoulder', imageUrl:'images/design25.jpg', msg:'Hi! I am interested in the One-Shoulder Tropical Maxi. Please share details.' },
+    { title:'Layered Top & Slit Skirt Set', description:'Elegant co-ord set with pencil skirt', imageUrl:'images/design26.jpg', msg:'Hi! I love the Layered Top & Slit Skirt Set. Please share details.' },
+    { title:'Double-Breasted Blazer Dress', description:'Structured mini dress with gold buttons', imageUrl:'images/design27.jpg', msg:'Hi! I am interested in the Double-Breasted Blazer Dress. Please share details.' },
+    { title:'Colorblock Evening Jumpsuit', description:'Dramatic black & ivory formal jumpsuit', imageUrl:'images/design28.jpg', msg:'Hi! I love the Colorblock Evening Jumpsuit. Please share details.' },
+    { title:'Plaid Tailored Blazer', description:'Classic checked blazer with notch lapels', imageUrl:'images/design29.jpg', msg:'Hi! I am interested in the Plaid Tailored Blazer. Please share details.' },
+    { title:'Crop Top & Mini Skirt Set', description:'Chic two-piece with zip-detail skirt', imageUrl:'images/design30.jpg', msg:'Hi! I love the Crop Top & Mini Skirt Set. Please share details.' },
+    { title:'One-Shoulder Belted Mini', description:'Structured mini dress with buckle belt', imageUrl:'images/design31.jpg', msg:'Hi! I am interested in the One-Shoulder Belted Mini. Please share details.' },
+    { title:'Blazer & Shift Dress Set', description:'Elegant teal two-piece suit set', imageUrl:'images/design32.jpg', msg:'Hi! I love the Blazer & Shift Dress Set. Please share details.' },
+    { title:'Crochet Flutter Dress', description:'Romantic lace crochet mini with flutter sleeves', imageUrl:'images/design33.jpg', msg:'Hi! I am interested in the Crochet Flutter Dress. Please share details.' },
+    { title:'Ruffle Midi Gown', description:'Square-neck midi with layered ruffle hem', imageUrl:'images/design34.jpg', msg:'Hi! I love the Ruffle Midi Gown. Please share details.' }
+];
+
+let activePortfolio = [];
+
+function buildGrid(items) {
+    const grid = document.getElementById('portfolioGrid');
+    grid.innerHTML = items.map((item, i) => `
+        <div class="portfolio-item" onclick="openLB(${i})">
+            <img src="${item.imageUrl}" alt="${item.title}" loading="lazy">
+            <div class="portfolio-overlay">
+                <div class="portfolio-overlay-content">
+                    <h3>${item.title}</h3>
+                    <p>${item.description || ''}</p>
+                    <a class="portfolio-wa-btn" href="#" onclick="event.stopPropagation();return openWA('${item.msg || 'Hi! I saw your portfolio and want to enquire.'}')">
+                        <i class="fab fa-whatsapp"></i> Enquire
+                    </a>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+async function loadPortfolio() {
+    try {
+        const res = await fetch(`${API_BASE}/portfolio`);
+        const json = await res.json();
+        // Use API data if it has real images, else use fallback
+        const items = json.success && json.data.filter(p => p.imageUrl && !p.imageUrl.startsWith('https://...')).length
+            ? json.data.map(p => ({ ...p, msg: `Hi! I saw ${p.title} in your portfolio and want to enquire.` }))
+            : fallbackPortfolio;
+        activePortfolio = items;
+        buildGrid(items);
+    } catch {
+        activePortfolio = fallbackPortfolio;
+        buildGrid(fallbackPortfolio);
+    }
+}
+
+function openLB(i) {
+    document.getElementById('lbImg').src = activePortfolio[i].imageUrl;
+    document.getElementById('lbCap').textContent = activePortfolio[i].title + (activePortfolio[i].description ? ' — ' + activePortfolio[i].description : '');
+    document.getElementById('lightbox').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+loadPortfolio();
+</script>
+</body>
+</html>

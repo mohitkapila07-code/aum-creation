@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Aum Creations</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✂️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:wght@400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/shared.css">
+    <style>
+        .services-section{padding:80px 5%;max-width:1400px;margin:0 auto}
+        .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin-top:1rem}
+        .service-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;transition:all .3s}
+        .service-card:hover{border-color:var(--primary);box-shadow:0 15px 40px rgba(139,111,71,.2);transform:translateY(-12px)}
+        .service-icon{width:75px;height:75px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.8rem;color:var(--white)}
+        .service-card h3{font-family:'Poppins',sans-serif;font-size:1.3rem;margin-bottom:.8rem;color:var(--primary);font-weight:600}
+        .price-tag{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--white);font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;padding:.35rem .9rem;border-radius:20px;margin-bottom:1rem}
+        .service-card p{color:var(--text);line-height:1.7;margin-bottom:1rem;font-size:.95rem}
+        .wa-link{display:inline-flex;align-items:center;gap:.4rem;color:#25d366;text-decoration:none;font-weight:600;font-family:'Poppins',sans-serif;font-size:.9rem;transition:all .3s}
+        .wa-link:hover{color:#1da851;transform:translateX(3px)}
+        .loading{text-align:center;padding:3rem;color:var(--primary);font-family:'Poppins',sans-serif}
+        .loading i{font-size:2rem;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .icons-map{display:none}
+    </style>
+</head>
+<body class="lang-en" id="bodyEl">
+
+<header>
+    <nav>
+        <a href="/" class="logo"><img src="/static/images/logo.png" alt="Aum Creation Boutique Logo"><div class="logo-text">Aum Creations<span>Creation Boutique</span></div></a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/"><span class="en">Home</span><span class="hi">होम</span></a></li>
+            <li><a href="/about"><span class="en">About</span><span class="hi">हमारे बारे में</span></a></li>
+            <li><a href="/services"><span class="en">Services</span><span class="hi">सेवाएं</span></a></li>
+            <li><a href="/portfolio"><span class="en">Portfolio</span><span class="hi">पोर्टफोलियो</span></a></li>
+            <li><a href="/contact"><span class="en">Contact</span><span class="hi">संपर्क</span></a></li>
+            <li><button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i><span id="langLabel">हिंदी</span></button></li>
+            <li><a href="/contact" class="cta-btn"><span class="en">Book Appointment</span><span class="hi">अपॉइंटमेंट बुक करें</span></a></li>
+        </ul>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
+    </nav>
+</header>
+
+<div class="page-hero">
+    <h1><span class="en">Our Services</span><span class="hi">हमारी सेवाएं</span></h1>
+    <p><span class="en">Premium stitching & tailoring for every occasion</span><span class="hi">हर अवसर के लिए प्रीमियम सिलाई सेवाएं</span></p>
+</div>
+
+<section class="services-section">
+    <div class="services-grid" id="servicesGrid">
+        <div class="loading"><i class="fas fa-spinner"></i><p style="margin-top:1rem">Loading services...</p></div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; <span id="yr"></span> Aum Creations. All rights reserved.</p>
+    <div class="footer-bottom">
+        <p>Premium Stitching &amp; Tailoring Services | Ludhiana, Punjab</p>
+        <div class="footer-links">
+            <a href="/">Home</a><a href="/about">About</a><a href="/services">Services</a>
+            <a href="/portfolio">Portfolio</a><a href="/contact">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<div class="sticky-contact">
+    <a href="#" onclick="return openWA('Hello Aum Creations!')" class="sticky-btn whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
+    <a href="tel:+91 92172 97800" class="sticky-btn call-btn"><i class="fas fa-phone"></i></a>
+    <div class="sticky-btn scroll-to-top" id="scrollToTop"><i class="fas fa-arrow-up"></i></div>
+</div>
+
+<script src="/static/js/shared.js"></script>
+<script>
+const categoryIcons = {
+    bridal: 'fas fa-gem', custom: 'fas fa-paint-brush',
+    alterations: 'fas fa-scissors', default: 'fas fa-shirt'
+};
+
+async function loadServices() {
+    const grid = document.getElementById('servicesGrid');
+    try {
+        const res = await fetch(`${API_BASE}/services`);
+        const json = await res.json();
+        if (!json.success || !json.data.length) {
+            grid.innerHTML = '<p style="text-align:center;color:#999">No services found.</p>';
+            return;
+        }
+        grid.innerHTML = json.data.map(s => `
+            <div class="service-card">
+                <div class="service-icon"><i class="${categoryIcons[s.category] || categoryIcons.default}"></i></div>
+                <h3>${s.name}</h3>
+                <div class="price-tag">Starting ₹${s.price?.toLocaleString('en-IN') || 'Call for price'}</div>
+                <p>${s.description || 'Premium quality tailoring service'}</p>
+                <a class="wa-link" href="#" onclick="return openWA('Hi! I am interested in ${s.name}. Please share details.')">
+                    <i class="fab fa-whatsapp"></i> Enquire on WhatsApp
+                </a>
+            </div>`).join('');
+    } catch (err) {
+        // Fallback if API is offline
+        const fallbackServices = [
+            { icon: 'fas fa-gem',         name: 'Bridal Lehenga Stitching',  price: '3,000', desc: 'Exquisite custom bridal lehengas crafted with premium fabrics and intricate detailing for your dream wedding day.', wa: 'Bridal Lehenga Stitching' },
+            { icon: 'fas fa-paint-brush', name: 'Custom Suit Tailoring',      price: '800',   desc: 'Bespoke salwar suits and Punjabi suits stitched to perfection — from casual cottons to heavy embroidered party wear.', wa: 'Custom Suit Tailoring' },
+            { icon: 'fas fa-shirt',       name: 'Blouse Stitching',           price: '300',   desc: 'Designer blouse stitching with precision fit, including back-neck designs, sleeve styles, and hand embroidery work.', wa: 'Blouse Stitching' },
+            { icon: 'fas fa-scissors',    name: 'Saree Fall &amp; Pico',      price: '150',   desc: 'Expert saree fall stitching, pico border finishing, and blouse matching so your saree drapes beautifully every time.', wa: 'Saree Fall and Pico' },
+            { icon: 'fas fa-star',        name: 'Embroidery &amp; Hand Work', price: '500',   desc: 'Traditional zari, gota, mirror work, and thread embroidery on lehengas, suits, and dupattas — all handcrafted with love.', wa: 'Embroidery and Hand Work' },
+            { icon: 'fas fa-wrench',      name: 'Alteration &amp; Fitting',   price: '150',   desc: 'Professional alterations for a flawless fit — waist adjustments, hemming, sleeve shortening, and full size modifications.', wa: 'Alteration and Fitting' },
+            { icon: 'fas fa-palette',     name: 'Designer Kurti Stitching',   price: '400',   desc: 'Trendy and elegant kurtis stitched in your fabric of choice — anarkali, A-line, straight-cut, or asymmetric styles.', wa: 'Designer Kurti Stitching' },
+            { icon: 'fas fa-crown',       name: 'Party Wear Gown',            price: '1,500', desc: 'Glamorous floor-length and knee-length gowns for receptions, sangeet nights, and special occasions — stitched to impress.', wa: 'Party Wear Gown' },
+            { icon: 'fas fa-comments',    name: 'Design Consultation',        price: 'Free',  desc: 'Free one-on-one consultation with our expert designers to finalize fabric, design, and measurements before stitching begins.', wa: 'Free Design Consultation' },
+        ];
+        grid.innerHTML = fallbackServices.map(s => `
+            <div class="service-card">
+                <div class="service-icon"><i class="${s.icon}"></i></div>
+                <h3>${s.name}</h3>
+                <div class="price-tag">Starting ₹${s.price}</div>
+                <p>${s.desc}</p>
+                <a class="wa-link" href="#" onclick="return openWA('Hi! I am interested in ${s.wa}. Please share details.')">
+                    <i class="fab fa-whatsapp"></i> Enquire on WhatsApp
+                </a>
+            </div>`).join('');
+    }
+}
+loadServices();
+</script>
+</body>
+</html>

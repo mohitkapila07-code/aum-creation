@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aum Creations - Admin Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container { display: flex; min-height: 100vh; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 240px;
+            background: #1a1a1a;
+            padding: 28px 18px;
+            color: #fff;
+            border-right: 2px solid #c9a84c;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #c9a84c;
+        }
+        .sidebar-logo h3 { font-size: 13px; font-weight: 600; line-height: 1.4; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 4px; }
+        .sidebar-menu a {
+            color: #999;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 11px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 13.5px;
+        }
+        .sidebar-menu a.active, .sidebar-menu a:hover { background: #c9a84c; color: #1a1a1a; font-weight: 600; }
+        .sidebar-divider { border: none; border-top: 1px solid #2e2e2e; margin: 12px 0; }
+
+        /* ── Main ── */
+        .main-content { flex: 1; padding: 36px 40px; overflow-y: auto; min-width: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+        .header h1 { color: #c9a84c; font-size: 24px; font-weight: 700; }
+        #userEmail { color: #888; font-size: 13px; }
+
+        /* ── Stats ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px 20px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+            border-left: 4px solid #c9a84c;
+        }
+        .stat-card.green  { border-left-color: #28a745; }
+        .stat-card.red    { border-left-color: #dc3545; }
+        .stat-card.blue   { border-left-color: #007bff; }
+        .stat-icon { font-size: 22px; margin-bottom: 8px; display: block; }
+        .stat-value { font-size: 30px; font-weight: 700; color: #1a1a1a; display: block; }
+        .stat-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; display: block; }
+
+        /* ── Alert ── */
+        .alert {
+            padding: 13px 16px; border-radius: 7px;
+            margin-bottom: 18px; display: none;
+            animation: slideIn 0.25s ease; font-size: 13.5px;
+        }
+        .alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .alert.error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+        @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* ── Tabs ── */
+        .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 2px solid #ddd; }
+        .tab {
+            padding: 10px 16px; cursor: pointer; background: none; border: none;
+            color: #777; font-weight: 500; font-size: 13.5px;
+            border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+        }
+        .tab.active { color: #c9a84c; border-bottom-color: #c9a84c; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ── Card ── */
+        .card {
+            background: white; padding: 24px; border-radius: 10px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07); margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 15px; font-weight: 600; color: #c9a84c;
+            margin-bottom: 18px; display: flex; align-items: center; gap: 7px;
+        }
+
+        /* ── Form ── */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+        .form-grid .full { grid-column: 1 / -1; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; font-size: 13px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 9px 11px;
+            border: 1px solid #ddd; border-radius: 6px;
+            font-size: 13.5px; font-family: inherit; transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: #c9a84c;
+            box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+        }
+        .form-group textarea { resize: vertical; min-height: 85px; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; }
+        .checkbox-group input { width: auto; }
+
+        /* Image preview */
+        .image-preview-box {
+            margin-top: 8px; width: 100%; height: 130px;
+            border: 2px dashed #e0e0e0; border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; background: #fafafa;
+        }
+        .image-preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .image-preview-box .no-img { color: #ccc; font-size: 12.5px; }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: 600; font-size: 13px;
+            transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-primary { background: #c9a84c; color: #1a1a1a; }
+        .btn-primary:hover { background: #b8972f; transform: translateY(-1px); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .form-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+
+        /* ── Table ── */
+        .table-toolbar {
+            display: flex; gap: 10px; margin-bottom: 14px;
+            flex-wrap: wrap; align-items: center;
+        }
+        .search-box {
+            flex: 1; min-width: 180px; padding: 9px 11px;
+            border: 1px solid #ddd; border-radius: 6px; font-size: 13.5px;
+        }
+        .search-box:focus { outline: none; border-color: #c9a84c; }
+        .filter-select {
+            padding: 9px 11px; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 13.5px; background: white;
+        }
+        .filter-select:focus { outline: none; border-color: #c9a84c; }
+
+        .products-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .products-table th {
+            background: #f7f7f7; padding: 10px 12px;
+            text-align: left; font-weight: 600; color: #666;
+            border-bottom: 2px solid #eee; white-space: nowrap;
+        }
+        .products-table td {
+            padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle;
+        }
+        .products-table tr:hover td { background: #fdfdf5; }
+        .product-img {
+            width: 42px; height: 42px; object-fit: cover;
+            border-radius: 5px; border: 1px solid #eee; display: block;
+        }
+        .img-placeholder {
+            width: 42px; height: 42px; background: #f0f0f0;
+            border-radius: 5px; display: flex; align-items: center;
+            justify-content: center; font-size: 18px;
+        }
+        .badge {
+            display: inline-block; padding: 3px 9px;
+            border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap;
+        }
+        .badge-green { background: #d4edda; color: #155724; }
+        .badge-red   { background: #f8d7da; color: #721c24; }
+        .badge-gold  { background: #fff3cd; color: #856404; }
+
+        .table-actions { display: flex; gap: 5px; }
+
+        /* Pagination */
+        .pagination {
+            display: flex; gap: 5px; justify-content: center;
+            align-items: center; margin-top: 18px; flex-wrap: wrap;
+        }
+        .page-btn {
+            padding: 5px 11px; border: 1px solid #ddd; border-radius: 5px;
+            background: white; cursor: pointer; font-size: 13px; transition: all 0.15s;
+        }
+        .page-btn:hover, .page-btn.active {
+            background: #c9a84c; color: #1a1a1a;
+            border-color: #c9a84c; font-weight: 600;
+        }
+        .page-info { text-align: center; font-size: 12px; color: #999; margin-top: 8px; }
+
+        /* ── Edit Modal ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 1000;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: white; border-radius: 10px; padding: 28px;
+            width: 660px; max-width: 95vw; max-height: 90vh;
+            overflow-y: auto; animation: modalIn 0.22s ease;
+        }
+        @keyframes modalIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-title {
+            font-size: 17px; font-weight: 600; color: #c9a84c;
+            margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-close {
+            background: none; border: none; font-size: 20px;
+            cursor: pointer; color: #aaa; line-height: 1; padding: 2px 6px;
+        }
+        .modal-close:hover { color: #333; }
+
+        /* ── Import tabs ── */
+        .import-tabs { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 2px solid #ddd; }
+        .import-tab-btn {
+            padding: 9px 14px; cursor: pointer; background: none; border: none;
+            color: #777; font-weight: 500; font-size: 13.5px;
+            border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+        }
+        .import-tab-btn.active { color: #c9a84c; border-bottom-color: #c9a84c; }
+        .import-tab-content { display: none; }
+        .import-tab-content.active { display: block; }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed #c9a84c; border-radius: 8px; padding: 36px;
+            text-align: center; cursor: pointer; transition: all 0.25s;
+            background: #fffdf5; margin-bottom: 14px;
+        }
+        .upload-zone:hover, .upload-zone.dragover { background: rgba(201,168,76,0.08); }
+        .upload-zone input { display: none; }
+        .file-name { margin-top: 10px; font-size: 13px; color: #555; font-weight: 500; display: none; }
+
+        /* Spinner */
+        .loading { display: none; text-align: center; padding: 18px; }
+        .loading.active { display: block; }
+        .spinner {
+            border: 3px solid #f0f0f0; border-top: 3px solid #c9a84c;
+            border-radius: 50%; width: 34px; height: 34px;
+            animation: spin 0.8s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+        .progress-bar-container {
+            width: 100%; height: 7px; background: #e0e0e0;
+            border-radius: 10px; overflow: hidden; margin-top: 12px;
+        }
+        .progress-bar { height: 100%; background: #c9a84c; width: 0%; transition: width 0.3s; }
+
+        /* Category breakdown */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px,1fr));
+            gap: 10px;
+        }
+        .cat-item {
+            background: #fafafa; border-radius: 8px; padding: 12px 14px;
+            border-left: 3px solid #c9a84c;
+        }
+        .cat-item .cat-name { font-weight: 600; font-size: 12.5px; color: #444; }
+        .cat-item .cat-count { font-size: 24px; font-weight: 700; color: #c9a84c; margin: 4px 0 2px; }
+        .cat-item .cat-sub { font-size: 11px; color: #aaa; }
+
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid .full { grid-column: 1; }
+            .sidebar { width: 200px; }
+        }
+        @media (max-width: 640px) {
+            .sidebar { display: none; }
+            .main-content { padding: 18px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ── Feedback Tab ── */
+        .star-display { font-size: 13px; white-space: nowrap; letter-spacing: 1px; }
+        #feedbackTable td { vertical-align: middle; }
+        #feedbackFormCard { border-top: 3px solid #c9a84c; }
+        .feedback-preview {
+            background: #fffdf5; border: 1px solid #f0e0a0; border-radius: 8px;
+            padding: 14px 18px; margin-top: 12px; font-size: 13px;
+            color: #555; font-style: italic; display: none;
+        }
+        .feedback-preview.visible { display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <h3>🏪 Aum Creations<br>Admin Panel</h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="switchTabByName('dashboard');return false;" id="nav-dashboard" class="active">📊 Dashboard</a></li>
+            <li><a href="#" onclick="switchTabByName('manageProducts');return false;" id="nav-manageProducts">📦 Manage Products</a></li>
+            <hr class="sidebar-divider">
+            <li><a href="#" onclick="switchTabByName('addProduct');return false;" id="nav-addProduct">➕ Add Product</a></li>
+            <li><a href="#" onclick="switchTabByName('bulkImport');return false;" id="nav-bulkImport">📤 Bulk Import</a></li>
+            <hr class="sidebar-divider">
+            <li><a href="#" onclick="switchTabByName('manageFeedback');return false;" id="nav-manageFeedback">💬 Manage Feedback</a></li>
+            <hr class="sidebar-divider">
+            <li><a href="#" onclick="logout();return false;" style="color:#ff6b6b;">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <span id="userEmail"></span>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <!-- ══════════════════════════════════ -->
+        <!-- Dashboard Tab                     -->
+        <!-- ══════════════════════════════════ -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">📦</span>
+                    <span class="stat-value" id="stat-total">—</span>
+                    <span class="stat-label">Total Products</span>
+                </div>
+                <div class="stat-card green">
+                    <span class="stat-icon">✅</span>
+                    <span class="stat-value" id="stat-instock">—</span>
+                    <span class="stat-label">In Stock</span>
+                </div>
+                <div class="stat-card red">
+                    <span class="stat-icon">❌</span>
+                    <span class="stat-value" id="stat-outstock">—</span>
+                    <span class="stat-label">Out of Stock</span>
+                </div>
+                <div class="stat-card blue">
+                    <span class="stat-icon">🏷️</span>
+                    <span class="stat-value" id="stat-cats">—</span>
+                    <span class="stat-label">Categories Used</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Products by Category</div>
+                <div class="cat-grid" id="categoryBreakdown">
+                    <p style="color:#ccc;font-size:13px;">Loading...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🕒 Recently Added Products</div>
+                <div style="overflow-x:auto;">
+                    <table class="products-table">
+                        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th></tr></thead>
+                        <tbody id="recentTableBody">
+                            <tr><td colspan="5" style="text-align:center;color:#ccc;padding:24px;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════ -->
+        <!-- Manage Products Tab               -->
+        <!-- ══════════════════════════════════ -->
+        <div id="manageProducts" class="tab-content">
+            <div class="card">
+                <div class="card-title">📦 All Products</div>
+                <div class="table-toolbar">
+                    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by name..." oninput="filterProducts()">
+                    <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
+                        <option value="">All Categories</option>
+                        <option>Bridal Wear</option><option>Casual Wear</option>
+                        <option>Ethnic Wear</option><option>Party Wear</option>
+                        <option>Formal Wear</option><option>Sarees</option>
+                        <option>Kurtis</option><option>Suits</option>
+                        <option>Alterations</option><option>Consultation</option>
+                    </select>
+                    <select class="filter-select" id="stockFilter" onchange="filterProducts()">
+                        <option value="">All Stock</option>
+                        <option value="true">In Stock</option>
+                        <option value="false">Out of Stock</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="refreshProducts()">🔄 Refresh</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="products-table">
+                        <thead>
+                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr><td colspan="6" style="text-align:center;color:#ccc;padding:30px;">Loading products...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noProducts" style="display:none;text-align:center;padding:36px;color:#aaa;">😕 No products match your filters.</div>
+                <div class="pagination" id="pagination"></div>
+                <div class="page-info" id="pageInfo"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════ -->
+        <!-- Add Product Tab                   -->
+        <!-- ══════════════════════════════════ -->
+        <div id="addProduct" class="tab-content">
+            <div class="card">
+                <div class="card-title">➕ Add Single Product</div>
+                <form onsubmit="saveProduct(event)" id="addProductForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="productName" required placeholder="e.g. Bridal Lehenga">
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="productCategory" required>
+                                <option value="">Select Category</option>
+                                <option>Bridal Wear</option><option>Casual Wear</option>
+                                <option>Ethnic Wear</option><option>Party Wear</option>
+                                <option>Formal Wear</option><option>Sarees</option>
+                                <option>Kurtis</option><option>Suits</option>
+                                <option>Alterations</option><option>Consultation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" id="productPrice" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Specifications</label>
+                            <input type="text" id="productSpecifications" placeholder="Material: Silk | Length: 48 inches">
+                        </div>
+                        <div class="form-group full">
+                            <label>Description *</label>
+                            <textarea id="productDescription" required placeholder="Describe the product..."></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Image URL</label>
+                            <input type="url" id="productImage" placeholder="https://example.com/image.jpg" oninput="previewImage('productImage','addImgPreview')">
+                            <div class="image-preview-box" id="addImgPreview">
+                                <span class="no-img">Image preview will appear here</span>
+                            </div>
+                        </div>
+                        <div class="form-group full">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="productInStock" checked>
+                                <label for="productInStock">In Stock</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">✅ Save Product</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetAddForm()">🔄 Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════ -->
+        <!-- Bulk Import Tab                   -->
+        <!-- ══════════════════════════════════ -->
+        <div id="bulkImport" class="tab-content">
+            <div class="import-tabs">
+                <button class="import-tab-btn active" onclick="switchImportTab('csvImport',this)">📊 CSV Upload</button>
+                <button class="import-tab-btn" onclick="switchImportTab('jsonImport',this)">🔗 JSON Paste</button>
+            </div>
+
+            <div id="csvImport" class="import-tab-content active">
+                <div class="card">
+                    <div class="card-title">📥 CSV File Upload</div>
+                    <div id="uploadZone" class="upload-zone" onclick="document.getElementById('csvFile').click()">
+                        <input type="file" id="csvFile" accept=".csv" onchange="showFileName(this)">
+                        <p style="font-size:26px;margin-bottom:6px;">📁</p>
+                        <p style="font-size:14px;font-weight:600;margin-bottom:4px;">Drag & drop CSV file here</p>
+                        <p style="color:#aaa;font-size:13px;margin-bottom:12px;">or click to browse</p>
+                        <button type="button" class="btn btn-secondary" onclick="event.stopPropagation();document.getElementById('csvFile').click()">Choose File</button>
+                        <div class="file-name" id="selectedFileName"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button onclick="uploadCSV()" class="btn btn-primary">⬆️ Upload & Import</button>
+                        <button onclick="downloadCSVTemplate()" class="btn btn-secondary">📥 Download Template</button>
+                    </div>
+                    <div id="csvLoading" class="loading">
+                        <div class="spinner"></div>
+                        <p style="margin-top:10px;font-size:13px;">Uploading and importing...</p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBarFill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="jsonImport" class="import-tab-content">
+                <div class="card">
+                    <div class="card-title">🔗 JSON Paste</div>
+                    <div class="form-group">
+                        <label>Paste JSON Array</label>
+                        <textarea id="jsonData" style="min-height:170px;font-family:monospace;font-size:13px;"
+                            placeholder='[{"name":"Product 1","category":"Bridal Wear","price":5000,"description":"...","in_stock":true}]'></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button onclick="importJSON()" class="btn btn-primary">🚀 Import from JSON</button>
+                        <button onclick="document.getElementById('jsonData').value=''" class="btn btn-secondary">🔄 Clear</button>
+                    </div>
+                    <div id="jsonLoading" class="loading">
+                        <div class="spinner"></div>
+                        <p style="margin-top:10px;font-size:13px;">Importing products...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════ -->
+        <!-- Manage Feedback Tab               -->
+        <!-- ══════════════════════════════════ -->
+        <div id="manageFeedback" class="tab-content">
+
+            <!-- Add / Edit Feedback Form -->
+            <div class="card" id="feedbackFormCard">
+                <div class="card-title">
+                    <span id="feedbackFormTitle">💬 Add New Testimonial</span>
+                </div>
+                <input type="hidden" id="editFeedbackId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Customer Name *</label>
+                        <input type="text" id="fbName" placeholder="e.g. Priya Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label>Role / Occasion</label>
+                        <input type="text" id="fbRole" placeholder="e.g. Bride, Happy Customer, Wedding Guest">
+                    </div>
+                    <div class="form-group full">
+                        <label>Testimonial Message *</label>
+                        <textarea id="fbMessage" rows="4" placeholder="Write the customer's feedback or testimonial here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Star Rating</label>
+                        <select id="fbRating">
+                            <option value="5">⭐⭐⭐⭐⭐ — 5 Stars</option>
+                            <option value="4">⭐⭐⭐⭐ — 4 Stars</option>
+                            <option value="3">⭐⭐⭐ — 3 Stars</option>
+                            <option value="2">⭐⭐ — 2 Stars</option>
+                            <option value="1">⭐ — 1 Star</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:flex;align-items:flex-end;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="fbActive" checked>
+                            <label for="fbActive" style="margin:0;cursor:pointer;">Show on website</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="saveFeedback()">💾 Save Testimonial</button>
+                    <button class="btn btn-secondary" onclick="resetFeedbackForm()">✕ Cancel</button>
+                </div>
+            </div>
+
+            <!-- Feedback Table -->
+            <div class="card">
+                <div class="card-title">
+                    💬 All Testimonials
+                    <button class="btn btn-primary btn-sm" onclick="loadFeedback()" style="margin-left:auto;">🔄 Refresh</button>
+                </div>
+                <table class="products-table" id="feedbackTable">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Role</th>
+                            <th>Message</th>
+                            <th>Rating</th>
+                            <th>Visible</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedbackTableBody">
+                        <tr><td colspan="6" style="text-align:center;padding:2rem;color:#aaa;">Loading testimonials...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!-- /manageFeedback -->
+
+    </div><!-- /main-content -->
+</div><!-- /container -->
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-title">
+            ✏️ Edit Product
+            <button class="modal-close" onclick="closeEditModal()">✕</button>
+        </div>
+        <input type="hidden" id="editProductId">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Product Name *</label>
+                <input type="text" id="editName" required>
+            </div>
+            <div class="form-group">
+                <label>Category *</label>
+                <select id="editCategory">
+                    <option>Bridal Wear</option><option>Casual Wear</option>
+                    <option>Ethnic Wear</option><option>Party Wear</option>
+                    <option>Formal Wear</option><option>Sarees</option>
+                    <option>Kurtis</option><option>Suits</option>
+                    <option>Alterations</option><option>Consultation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Price (₹) *</label>
+                <input type="number" id="editPrice" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Specifications</label>
+                <input type="text" id="editSpecifications">
+            </div>
+            <div class="form-group full">
+                <label>Description *</label>
+                <textarea id="editDescription"></textarea>
+            </div>
+            <div class="form-group full">
+                <label>Image URL</label>
+                <input type="url" id="editImage" oninput="previewImage('editImage','editImgPreview')">
+                <div class="image-preview-box" id="editImgPreview">
+                    <span class="no-img">Image preview</span>
+                </div>
+            </div>
+            <div class="form-group full">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="editInStock">
+                    <label for="editInStock">In Stock</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button onclick="updateProduct()" class="btn btn-primary">💾 Save Changes</button>
+            <button onclick="closeEditModal()" class="btn btn-secondary">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────
+const API_BASE = 'http://localhost:5000/api';
+
+// ── State ─────────────────────────────────────────────────
+let allProducts      = [];
+let filteredProducts = [];
+let currentPage      = 1;
+const PAGE_SIZE      = 10;
+const TAB_IDS        = ['dashboard','manageProducts','addProduct','bulkImport','manageFeedback'];
+
+// ── Auth ──────────────────────────────────────────────────
+function isTokenExpired(token) {
+    try {
+        const p = JSON.parse(atob(token.split('.')[1]));
+        return Date.now() >= p.exp * 1000;
+    } catch { return true; }
+}
+
+function getToken() {
+    const t = localStorage.getItem('auth_token');
+    if (t && isTokenExpired(t)) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_email');
+        return null;
+    }
+    return t;
+}
+
+function authHeaders() {
+    const t = getToken();
+    return t ? { 'Authorization': `Bearer ${t}`, 'Content-Type': 'application/json' } : {};
+}
+
+function logout() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_email');
+    window.location.href = '/admin-login.html';
+}
+
+// ── Init ──────────────────────────────────────────────────
+window.onload = async function () {
+    if (!getToken()) {
+        alert('Session expired or not logged in. Redirecting to login.');
+        window.location.href = '/admin-login.html';
+        return;
+    }
+    const email = localStorage.getItem('user_email');
+    document.getElementById('userEmail').textContent = '👤 ' + (email || '');
+
+    await loadProducts();
+    renderDashboard();
+
+    // Drag & drop
+    const zone = document.getElementById('uploadZone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('dragover');
+        const f = e.dataTransfer.files[0];
+        if (f) { document.getElementById('csvFile').files = e.dataTransfer.files; showFileName({ files: [f] }); }
+    });
+
+    // Close modal on overlay click
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) closeEditModal();
+    });
+};
+
+// ── Tab Navigation ────────────────────────────────────────
+function switchTabByName(name) {
+    TAB_IDS.forEach(id => {
+        document.getElementById(id).classList.remove('active');
+        const n = document.getElementById('nav-' + id);
+        if (n) n.classList.remove('active');
+    });
+    document.getElementById(name).classList.add('active');
+    const nav = document.getElementById('nav-' + name);
+    if (nav) nav.classList.add('active');
+    if (name === 'manageProducts') renderProductsTable();
+    if (name === 'dashboard')      renderDashboard();
+    if (name === 'manageFeedback') loadFeedback();
+}
+
+function switchImportTab(tabName, btn) {
+    document.querySelectorAll('.import-tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.import-tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    btn.classList.add('active');
+}
+
+// ── Alert ─────────────────────────────────────────────────
+function showAlert(msg, type = 'success') {
+    const el = document.getElementById('alert');
+    el.textContent = msg;
+    el.className = 'alert ' + type;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = 'alert', 5000);
+}
+
+// ── Load Products ─────────────────────────────────────────
+async function loadProducts() {
+    try {
+        const res  = await fetch(`${API_BASE}/products?limit=100`, { headers: authHeaders() });
+        const data = await res.json();
+        if (data.success) {
+            allProducts      = data.data || [];
+            filteredProducts = [...allProducts];
+        }
+    } catch(e) { console.error('Load products error', e); }
+}
+
+async function refreshProducts() {
+    await loadProducts();
+    filterProducts();
+    renderDashboard();
+    showAlert('✅ Products refreshed', 'success');
+}
+
+// ── Dashboard ─────────────────────────────────────────────
+function renderDashboard() {
+    const total    = allProducts.length;
+    const inStock  = allProducts.filter(p => p.in_stock).length;
+    const cats     = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+
+    document.getElementById('stat-total').textContent    = total;
+    document.getElementById('stat-instock').textContent  = inStock;
+    document.getElementById('stat-outstock').textContent = total - inStock;
+    document.getElementById('stat-cats').textContent     = cats.length;
+
+    // Category breakdown
+    const grid = document.getElementById('categoryBreakdown');
+    if (!total) {
+        grid.innerHTML = '<p style="color:#ccc;font-size:13px;">No products yet.</p>';
+    } else {
+        const counts = {};
+        allProducts.forEach(p => { counts[p.category] = (counts[p.category] || 0) + 1; });
+        grid.innerHTML = Object.entries(counts)
+            .sort((a,b) => b[1]-a[1])
+            .map(([cat, n]) => `
+                <div class="cat-item">
+                    <div class="cat-name">${cat}</div>
+                    <div class="cat-count">${n}</div>
+                    <div class="cat-sub">product${n!==1?'s':''}</div>
+                </div>`).join('');
+    }
+
+    // Recent 5
+    const tbody  = document.getElementById('recentTableBody');
+    const recent = [...allProducts].slice(-5).reverse();
+    tbody.innerHTML = recent.length
+        ? recent.map(p => productRow(p, false)).join('')
+        : '<tr><td colspan="5" style="text-align:center;color:#ccc;padding:24px;">No products yet.</td></tr>';
+}
+
+function productRow(p, withActions = true) {
+    const img  = p.image_url
+        ? `<img src="${p.image_url}" class="product-img" onerror="this.outerHTML='<div class=\\'img-placeholder\\'>👗</div>'">`
+        : '<div class="img-placeholder">👗</div>';
+    const name = p.name.length > 28 ? p.name.slice(0,26)+'…' : p.name;
+    const price = '₹' + Number(p.price).toLocaleString('en-IN');
+    const stock = `<span class="badge ${p.in_stock?'badge-green':'badge-red'}">${p.in_stock?'In Stock':'Out of Stock'}</span>`;
+    const actions = withActions ? `
+        <td>
+            <div class="table-actions">
+                <button class="btn btn-secondary btn-sm" onclick="openEditModal('${p._id}')">✏️ Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p._id}','${p.name.replace(/'/g,"\\'")}')">🗑️</button>
+            </div>
+        </td>` : '';
+    return `<tr><td>${img}</td><td title="${p.name}">${name}</td><td><span class="badge badge-gold">${p.category}</span></td><td style="white-space:nowrap">${price}</td><td>${stock}</td>${actions}</tr>`;
+}
+
+// ── Manage Products ───────────────────────────────────────
+function filterProducts() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const cat    = document.getElementById('categoryFilter').value;
+    const stock  = document.getElementById('stockFilter').value;
+
+    filteredProducts = allProducts.filter(p => {
+        const ms = !search || p.name.toLowerCase().includes(search) || (p.description||'').toLowerCase().includes(search);
+        const mc = !cat   || p.category === cat;
+        const mk = stock === '' ? true : String(p.in_stock) === stock;
+        return ms && mc && mk;
+    });
+    currentPage = 1;
+    renderProductsTable();
+}
+
+function renderProductsTable() {
+    const tbody  = document.getElementById('productsTableBody');
+    const noMsg  = document.getElementById('noProducts');
+    const pagEl  = document.getElementById('pagination');
+    const infoEl = document.getElementById('pageInfo');
+
+    if (!filteredProducts.length) {
+        tbody.innerHTML = '';
+        noMsg.style.display = 'block';
+        pagEl.innerHTML = ''; infoEl.textContent = '';
+        return;
+    }
+    noMsg.style.display = 'none';
+
+    const total  = filteredProducts.length;
+    const pages  = Math.ceil(total / PAGE_SIZE);
+    const start  = (currentPage - 1) * PAGE_SIZE;
+    const items  = filteredProducts.slice(start, start + PAGE_SIZE);
+
+    tbody.innerHTML = items.map(p => productRow(p, true)).join('');
+
+    // Pagination
+    pagEl.innerHTML = '';
+    if (pages > 1) {
+        if (currentPage > 1)  pagEl.innerHTML += `<button class="page-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+        for (let i = 1; i <= pages; i++)
+            pagEl.innerHTML += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+        if (currentPage < pages) pagEl.innerHTML += `<button class="page-btn" onclick="goPage(${currentPage+1})">›</button>`;
+    }
+    infoEl.textContent = `Showing ${start+1}–${Math.min(start+PAGE_SIZE,total)} of ${total} products`;
+}
+
+function goPage(n) { currentPage = n; renderProductsTable(); }
+
+// ── Add Product ───────────────────────────────────────────
+async function saveProduct(e) {
+    e.preventDefault();
+    const token = getToken();
+    if (!token) { showAlert('❌ Please login first', 'error'); return; }
+
+    const product = {
+        name:           document.getElementById('productName').value,
+        category:       document.getElementById('productCategory').value,
+        price:          parseFloat(document.getElementById('productPrice').value),
+        description:    document.getElementById('productDescription').value,
+        specifications: document.getElementById('productSpecifications').value,
+        image_url:      document.getElementById('productImage').value,
+        in_stock:       document.getElementById('productInStock').checked
+    };
+
+    try {
+        const res  = await fetch(`${API_BASE}/products`, { method:'POST', headers:authHeaders(), body:JSON.stringify(product) });
+        const data = await res.json();
+        if (data.success) {
+            showAlert('✅ Product saved successfully!', 'success');
+            resetAddForm();
+            await loadProducts();
+            renderDashboard();
+        } else {
+            showAlert('❌ ' + (data.detail || data.message || 'Unknown error'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+}
+
+function resetAddForm() {
+    document.getElementById('addProductForm').reset();
+    document.getElementById('addImgPreview').innerHTML = '<span class="no-img">Image preview will appear here</span>';
+}
+
+// ── Image Preview ─────────────────────────────────────────
+function previewImage(inputId, boxId) {
+    const url = document.getElementById(inputId).value;
+    const box = document.getElementById(boxId);
+    box.innerHTML = url
+        ? `<img src="${url}" onerror="this.parentNode.innerHTML='<span class=\\'no-img\\'>Invalid URL</span>'">`
+        : '<span class="no-img">Image preview will appear here</span>';
+}
+
+// ── Edit Modal ────────────────────────────────────────────
+function openEditModal(id) {
+    const p = allProducts.find(x => x._id === id);
+    if (!p) return;
+    document.getElementById('editProductId').value      = p._id;
+    document.getElementById('editName').value           = p.name;
+    document.getElementById('editCategory').value       = p.category;
+    document.getElementById('editPrice').value          = p.price;
+    document.getElementById('editDescription').value    = p.description;
+    document.getElementById('editSpecifications').value = p.specifications || '';
+    document.getElementById('editImage').value          = p.image_url || '';
+    document.getElementById('editInStock').checked      = p.in_stock;
+    const box = document.getElementById('editImgPreview');
+    box.innerHTML = p.image_url
+        ? `<img src="${p.image_url}" onerror="this.parentNode.innerHTML='<span class=\\'no-img\\'>No image</span>'">`
+        : '<span class="no-img">No image</span>';
+    document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('open');
+}
+
+async function updateProduct() {
+    const token = getToken();
+    if (!token) { showAlert('❌ Please login first', 'error'); return; }
+    const id = document.getElementById('editProductId').value;
+    const payload = {
+        name:           document.getElementById('editName').value,
+        category:       document.getElementById('editCategory').value,
+        price:          parseFloat(document.getElementById('editPrice').value),
+        description:    document.getElementById('editDescription').value,
+        specifications: document.getElementById('editSpecifications').value,
+        image_url:      document.getElementById('editImage').value,
+        in_stock:       document.getElementById('editInStock').checked
+    };
+    try {
+        const res  = await fetch(`${API_BASE}/products/${id}`, { method:'PUT', headers:authHeaders(), body:JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.success) {
+            showAlert('✅ Product updated!', 'success');
+            closeEditModal();
+            await loadProducts();
+            renderProductsTable();
+            renderDashboard();
+        } else {
+            showAlert('❌ ' + (data.detail || data.message || 'Unknown error'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+}
+
+// ── Delete Product ────────────────────────────────────────
+async function deleteProduct(id, name) {
+    if (!confirm(`⚠️ Delete "${name}"?\n\nThis cannot be undone.`)) return;
+    const token = getToken();
+    if (!token) { showAlert('❌ Please login first', 'error'); return; }
+    try {
+        const res  = await fetch(`${API_BASE}/products/${id}`, { method:'DELETE', headers:authHeaders() });
+        const data = await res.json();
+        if (data.success) {
+            showAlert('✅ Product deleted.', 'success');
+            await loadProducts();
+            filterProducts();
+            renderDashboard();
+        } else {
+            showAlert('❌ ' + (data.detail || data.message || 'Unknown error'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+}
+
+// ── CSV ───────────────────────────────────────────────────
+function showFileName(input) {
+    const el = document.getElementById('selectedFileName');
+    if (input.files && input.files[0]) {
+        el.textContent = '📄 ' + input.files[0].name;
+        el.style.display = 'block';
+    }
+}
+
+async function uploadCSV() {
+    const token = getToken();
+    if (!token) { showAlert('❌ Please login first', 'error'); return; }
+    const file = document.getElementById('csvFile').files[0];
+    if (!file) { showAlert('❌ Please select a CSV file first', 'error'); return; }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    document.getElementById('csvLoading').classList.add('active');
+    animateProgress();
+
+    try {
+        const res  = await fetch(`${API_BASE}/products/import-csv`, { method:'POST', headers:{'Authorization':`Bearer ${token}`}, body:formData });
+        const data = await res.json();
+        if (data.success) {
+            showAlert(`✅ ${data.imported_count} products imported!`, 'success');
+            document.getElementById('csvFile').value = '';
+            document.getElementById('selectedFileName').style.display = 'none';
+            await loadProducts(); renderDashboard();
+        } else {
+            showAlert('❌ ' + (data.detail || data.message || 'Unknown error'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+    finally {
+        document.getElementById('csvLoading').classList.remove('active');
+        document.getElementById('progressBarFill').style.width = '0%';
+    }
+}
+
+function animateProgress() {
+    let w = 0;
+    const bar = document.getElementById('progressBarFill');
+    bar.style.width = '0%';
+    const iv = setInterval(() => {
+        w = Math.min(w + Math.random() * 10, 88);
+        bar.style.width = w + '%';
+        if (w >= 88) clearInterval(iv);
+    }, 280);
+}
+
+function downloadCSVTemplate() {
+    const csv = "name,category,price,description,specifications,image_url,in_stock\nBridal Lehenga,Bridal Wear,12000,Elegant bridal lehenga,Material: Silk | Length: 48 inches,https://example.com/img.jpg,true\nSalwar Kameez,Casual Wear,1500,Cotton suit with prints,Material: Cotton,,true";
+    const a   = document.createElement('a');
+    a.href    = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = 'products_template.csv';
+    a.click();
+}
+
+// ── JSON Import ───────────────────────────────────────────
+async function importJSON() {
+    const token = getToken();
+    if (!token) { showAlert('❌ Please login first', 'error'); return; }
+    const raw = document.getElementById('jsonData').value.trim();
+    if (!raw) { showAlert('❌ Please paste JSON data first', 'error'); return; }
+    let products;
+    try { products = JSON.parse(raw); } catch { showAlert('❌ Invalid JSON format', 'error'); return; }
+    if (!Array.isArray(products)) { showAlert('❌ JSON must be an array', 'error'); return; }
+
+    document.getElementById('jsonLoading').classList.add('active');
+    try {
+        const res  = await fetch(`${API_BASE}/products/bulk-import`, { method:'POST', headers:authHeaders(), body:JSON.stringify({ products }) });
+        const data = await res.json();
+        if (data.success) {
+            showAlert(`✅ ${data.imported_count} products imported!`, 'success');
+            document.getElementById('jsonData').value = '';
+            await loadProducts(); renderDashboard();
+        } else {
+            showAlert('❌ ' + (data.detail || data.message || 'Unknown error'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+    finally { document.getElementById('jsonLoading').classList.remove('active'); }
+}
+// ── Feedback Management ───────────────────────────────────────────────────────
+let feedbackList = [];
+
+async function loadFeedback() {
+    const token = getToken();
+    if (!token) return;
+    const tbody = document.getElementById('feedbackTableBody');
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:#aaa;"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+    try {
+        const res  = await fetch(`${API_BASE}/feedback?all=true`, { headers: authHeaders() });
+        const data = await res.json();
+        feedbackList = data.data || [];
+        renderFeedbackTable();
+    } catch(err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#dc3545;padding:1.5rem;">⚠️ Could not load feedback. Is the server running?</td></tr>`;
+    }
+}
+
+function renderFeedbackTable() {
+    const tbody = document.getElementById('feedbackTableBody');
+    if (!feedbackList.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:#aaa;">No testimonials yet. Add one above!</td></tr>';
+        return;
+    }
+    const stars = n => '⭐'.repeat(parseInt(n) || 5);
+    tbody.innerHTML = feedbackList.map(f => `
+        <tr>
+            <td><strong>${escHtml(f.name)}</strong></td>
+            <td><span style="color:#888;font-size:12px;">${escHtml(f.role || '—')}</span></td>
+            <td style="max-width:320px;"><span style="font-size:12.5px;color:#555;">${escHtml((f.message||'').slice(0,120))}${f.message && f.message.length > 120 ? '…' : ''}</span></td>
+            <td style="white-space:nowrap;">${stars(f.rating)}</td>
+            <td>${f.active
+                ? '<span class="badge badge-green">✅ Visible</span>'
+                : '<span class="badge badge-red">🚫 Hidden</span>'}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn btn-primary btn-sm" onclick="editFeedback('${f._id}')">✏️ Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteFeedback('${f._id}', '${escHtml(f.name)}')">🗑</button>
+                </div>
+            </td>
+        </tr>`).join('');
+}
+
+function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function editFeedback(id) {
+    const f = feedbackList.find(x => x._id === id);
+    if (!f) return;
+    document.getElementById('feedbackFormTitle').textContent = '✏️ Edit Testimonial';
+    document.getElementById('editFeedbackId').value = id;
+    document.getElementById('fbName').value    = f.name    || '';
+    document.getElementById('fbRole').value    = f.role    || '';
+    document.getElementById('fbMessage').value = f.message || '';
+    document.getElementById('fbRating').value  = f.rating  || 5;
+    document.getElementById('fbActive').checked = !!f.active;
+    document.getElementById('feedbackFormCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetFeedbackForm() {
+    document.getElementById('feedbackFormTitle').textContent = '💬 Add New Testimonial';
+    document.getElementById('editFeedbackId').value = '';
+    document.getElementById('fbName').value    = '';
+    document.getElementById('fbRole').value    = '';
+    document.getElementById('fbMessage').value = '';
+    document.getElementById('fbRating').value  = '5';
+    document.getElementById('fbActive').checked = true;
+}
+
+async function saveFeedback() {
+    const token = getToken();
+    if (!token) { showAlert('❌ Please login first', 'error'); return; }
+
+    const name    = document.getElementById('fbName').value.trim();
+    const message = document.getElementById('fbMessage').value.trim();
+    if (!name)    { showAlert('❌ Customer name is required', 'error'); return; }
+    if (!message) { showAlert('❌ Testimonial message is required', 'error'); return; }
+
+    const payload = {
+        name,
+        role:    document.getElementById('fbRole').value.trim(),
+        message,
+        rating:  parseInt(document.getElementById('fbRating').value),
+        active:  document.getElementById('fbActive').checked
+    };
+
+    const id     = document.getElementById('editFeedbackId').value;
+    const url    = id ? `${API_BASE}/feedback/${id}` : `${API_BASE}/feedback`;
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const res  = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.success) {
+            showAlert(id ? '✅ Testimonial updated!' : '✅ Testimonial added!', 'success');
+            resetFeedbackForm();
+            await loadFeedback();
+        } else {
+            showAlert('❌ ' + (data.detail || 'Failed to save'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+}
+
+async function deleteFeedback(id, name) {
+    if (!confirm(`Delete testimonial from "${name}"? This cannot be undone.`)) return;
+    try {
+        const res  = await fetch(`${API_BASE}/feedback/${id}`, { method: 'DELETE', headers: authHeaders() });
+        const data = await res.json();
+        if (data.success) {
+            showAlert('✅ Testimonial deleted.', 'success');
+            await loadFeedback();
+        } else {
+            showAlert('❌ ' + (data.detail || 'Delete failed'), 'error');
+        }
+    } catch(err) { showAlert('❌ Error: ' + err.message, 'error'); }
+}
+
+
+</script>
+</body>
+</html>

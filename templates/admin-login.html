@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aum Creations - Admin Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .card {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid #c9a84c;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #c9a84c;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #999;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #444;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #c9a84c;
+            border-bottom-color: #c9a84c;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ccc;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #c9a84c;
+            box-shadow: 0 0 8px rgba(201, 168, 76, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #666;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .alert.error {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            display: block;
+        }
+
+        .alert.success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #51cf66;
+            border: 1px solid #51cf66;
+            display: block;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #c9a84c;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #b8972f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(201, 168, 76, 0.3);
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 3px solid #444;
+            border-top: 3px solid #c9a84c;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: #c9a84c;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .token-box {
+            background: #1a1a1a;
+            border: 1px solid #c9a84c;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: #999;
+            font-size: 12px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .token-box .label {
+            color: #c9a84c;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .copy-btn {
+            background: #444;
+            color: #c9a84c;
+            padding: 8px 15px;
+            border: 1px solid #c9a84c;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #c9a84c;
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>Aum Creations</h1>
+                <p>ADMIN PORTAL</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">🔓 Login</button>
+                <button class="tab-btn" onclick="switchTab('register')">📝 Register</button>
+            </div>
+
+            <!-- Login Tab -->
+            <div id="login" class="tab-content active">
+                <div id="loginAlert" class="alert"></div>
+                
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="admin@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn" id="loginBtn">Sign In →</button>
+                    <div class="loading" id="loginLoading">
+                        <div class="spinner"></div>
+                        <p style="color: #999; font-size: 13px;">Signing in...</p>
+                    </div>
+                </form>
+
+                <div id="tokenDisplay" style="display: none; margin-top: 20px;">
+                    <div class="success-message show">
+                        ✅ Login successful!
+                    </div>
+                    <div class="token-box">
+                        <span class="label">Your Access Token:</span>
+                        <div id="tokenValue"></div>
+                        <button class="copy-btn" onclick="copyToken()">📋 Copy Token</button>
+                    </div>
+                    <p style="color: #999; font-size: 12px; text-align: center; margin-top: 10px;">
+                        Go to <strong>admin-dashboard.html</strong> and paste this token when prompted
+                    </p>
+                    <button class="btn" onclick="goToDashboard()" style="background: #51cf66; margin-top: 10px;">
+                        → Go to Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Register Tab -->
+            <div id="register" class="tab-content">
+                <div id="registerAlert" class="alert"></div>
+
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="registerEmail" placeholder="admin@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="registerPassword" placeholder="Create a password" required minlength="6">
+                        <small style="color: #666; display: block; margin-top: 5px;">Min 6 characters</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="registerConfirm" placeholder="Confirm your password" required>
+                    </div>
+
+                    <button type="submit" class="btn" id="registerBtn">Create Account →</button>
+                    <div class="loading" id="registerLoading">
+                        <div class="spinner"></div>
+                        <p style="color: #999; font-size: 13px;">Creating account...</p>
+                    </div>
+                </form>
+
+                <div id="registerSuccess" class="success-message">
+                    <h3 style="color: #51cf66; margin-bottom: 10px;">✅ Registration Successful!</h3>
+                    <p style="color: #999; margin-bottom: 10px;">Your account has been created. Login with your credentials.</p>
+                    <button class="btn" onclick="switchTab('login')" style="background: #c9a84c;">
+                        → Go to Login
+                    </button>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>🏪 Admin Portal for Aum Creations</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+
+            if (password !== confirm) {
+                showAlert('registerAlert', '❌ Passwords do not match', 'error');
+                return;
+            }
+
+            document.getElementById('registerBtn').disabled = true;
+            document.getElementById('registerLoading').style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('registerAlert', '✅ ' + data.message, 'success');
+                    document.getElementById('registerSuccess').classList.add('show');
+                    document.querySelector('form').reset();
+                    setTimeout(() => switchTab('login'), 2000);
+                } else {
+                    showAlert('registerAlert', '❌ ' + (data.detail || 'Registration failed'), 'error');
+                }
+            } catch (error) {
+                showAlert('registerAlert', '❌ Error: ' + error.message, 'error');
+            } finally {
+                document.getElementById('registerBtn').disabled = false;
+                document.getElementById('registerLoading').style.display = 'none';
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginLoading').style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const token = data.access_token;
+                    localStorage.setItem('auth_token', token);
+                    localStorage.setItem('user_email', email);
+                    
+                    document.getElementById('tokenValue').textContent = token;
+                    document.getElementById('tokenDisplay').style.display = 'block';
+                    document.querySelector('form').style.display = 'none';
+                } else {
+                    showAlert('loginAlert', '❌ ' + (data.detail || 'Login failed'), 'error');
+                }
+            } catch (error) {
+                showAlert('loginAlert', '❌ Error: ' + error.message, 'error');
+            } finally {
+                document.getElementById('loginBtn').disabled = false;
+                document.getElementById('loginLoading').style.display = 'none';
+            }
+        }
+
+        function copyToken() {
+            const token = document.getElementById('tokenValue').textContent;
+            navigator.clipboard.writeText(token).then(() => {
+                alert('✅ Token copied to clipboard!');
+            }).catch(err => {
+                alert('❌ Failed to copy: ' + err);
+            });
+        }
+
+        function goToDashboard() {
+            window.location.href = '/admin-dashboard.html';
+        }
+
+        // Check if already logged in
+        function isTokenExpired(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return Date.now() >= payload.exp * 1000;
+            } catch {
+                return true;
+            }
+        }
+
+        window.onload = function() {
+            const token = localStorage.getItem('auth_token');
+            if (token && !isTokenExpired(token)) {
+                // Already logged in with valid token, go to dashboard
+                window.location.href = '/admin-dashboard.html';
+            } else if (token) {
+                // Token expired — clear it
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_email');
+            }
+        };
+    </script>
+</body>
+</html>
