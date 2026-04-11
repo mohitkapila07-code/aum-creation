@@ -39,14 +39,14 @@
         .about-image-overlay p{font-family:'Poppins',sans-serif;font-size:.85rem;opacity:.9}
 
         /* services preview */
-        .services-preview{padding:100px 5%;max-width:1400px;margin:0 auto}
-        .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px}
-        .service-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;transition:all .3s}
-        .service-card:hover{border-color:var(--primary);box-shadow:0 15px 40px rgba(139,111,71,.2);transform:translateY(-12px)}
-        .service-icon{width:75px;height:75px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.8rem;color:var(--white)}
-        .service-card h3{font-family:'Poppins',sans-serif;font-size:1.3rem;margin-bottom:.8rem;color:var(--primary);font-weight:600}
-        .price-tag{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--white);font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;padding:.35rem .9rem;border-radius:20px;margin-bottom:1rem}
-        .service-card p{color:var(--text);line-height:1.7;margin-bottom:1rem;font-size:.95rem}
+        .services-preview{padding:70px 5%;max-width:1400px;margin:0 auto}
+        .services-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+        .service-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1.3rem 1rem;text-align:center;transition:all .3s}
+        .service-card:hover{border-color:var(--primary);box-shadow:0 8px 24px rgba(139,111,71,.18);transform:translateY(-5px)}
+        .service-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem;font-size:1.15rem;color:var(--white)}
+        .service-card h3{font-family:'Poppins',sans-serif;font-size:.95rem;margin-bottom:.45rem;color:var(--primary);font-weight:600}
+        .price-tag{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--white);font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:600;padding:.22rem .65rem;border-radius:20px;margin-bottom:.6rem}
+        .service-card p{color:var(--text);line-height:1.55;margin-bottom:.7rem;font-size:.8rem}
         .wa-link{display:inline-flex;align-items:center;gap:.4rem;color:#25d366;text-decoration:none;font-weight:600;font-family:'Poppins',sans-serif;font-size:.9rem;transition:all .3s}
         .wa-link:hover{color:#1da851;transform:translateX(3px)}
         .view-all-btn{text-align:center;margin-top:3rem}
@@ -100,10 +100,10 @@
         .dot{width:12px;height:12px;border-radius:50%;background:var(--border);margin:0 8px;display:inline-block;cursor:pointer;transition:all .3s}
         .dot.active{background:var(--primary);width:30px;border-radius:6px}
 
-        @media(max-width:1024px){.about-preview{grid-template-columns:1fr}}
+        @media(max-width:1024px){.about-preview{grid-template-columns:1fr}.services-grid{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:768px){
             .hero h1{font-size:2.4rem}.hero p{font-size:1.1rem}.hero-cta{flex-direction:column}.btn{width:100%;justify-content:center}
-            .about-features{grid-template-columns:1fr}
+            .about-features{grid-template-columns:1fr}.services-grid{grid-template-columns:1fr}
             .booking-options{flex-direction:column;align-items:center}
             .booking-option{width:100%;max-width:300px}
         }
@@ -197,9 +197,9 @@
         <div class="service-card"><div class="service-icon"><i class="fas fa-gem"></i></div><h3>Bridal Lehenga</h3><div class="price-tag">Starting ₹5,000</div><p>Custom bridal lehengas with hand embroidery, zari work and designer blouses stitched to your exact measurements</p><a class="wa-link" href="#" onclick="return openWA('Hi! I am interested in Bridal Lehenga stitching.')"><i class="fab fa-whatsapp"></i> Enquire on WhatsApp</a></div>
         <div class="service-card"><div class="service-icon"><i class="fas fa-wind"></i></div><h3>Salwar Kameez &amp; Suits</h3><div class="price-tag">Starting ₹500</div><p>Punjabi suits, Anarkali suits and straight-cut salwar kameez stitched in your fabric with perfect fall and finish</p><a class="wa-link" href="#" onclick="return openWA('Hi! I want to get a Salwar Suit stitched.')"><i class="fab fa-whatsapp"></i> Enquire on WhatsApp</a></div>
         <div class="service-card"><div class="service-icon"><i class="fas fa-star"></i></div><h3>Kurti &amp; Palazzo</h3><div class="price-tag">Starting ₹300</div><p>Trendy kurtis, A-line, straight and flared styles with matching palazzo or pants — casual to festive</p><a class="wa-link" href="#" onclick="return openWA('Hi! I want Kurti stitching.')"><i class="fab fa-whatsapp"></i> Enquire on WhatsApp</a></div>
-        <div class="service-card"><div class="service-icon"><i class="fas fa-crown"></i></div><h3>Saree Blouse Stitching</h3><div class="price-tag">Starting ₹400</div><p>Designer blouses — backless, halter neck, full sleeve, work blouses — stitched to fit your saree perfectly</p><a class="wa-link" href="#" onclick="return openWA('Hi! I need a saree blouse stitched.')"><i class="fab fa-whatsapp"></i> Enquire on WhatsApp</a></div>
+
         <div class="service-card"><div class="service-icon"><i class="fas fa-scissors"></i></div><h3>Premium Alterations</h3><div class="price-tag">Starting ₹150</div><p>Expert modifications — fitting, hemming, size adjustment, zip changes — for all garment types</p><a class="wa-link" href="#" onclick="return openWA('Hi! I need alteration services.')"><i class="fab fa-whatsapp"></i> Enquire on WhatsApp</a></div>
-        <div class="service-card"><div class="service-icon"><i class="fas fa-paint-brush"></i></div><h3>Free Design Consultation</h3><div class="price-tag">Free</div><p>Not sure what to stitch? Visit our boutique and our designer will help you choose the best style for your occasion</p><a class="wa-link" href="#" onclick="return openWA('Hi! I would like a free design consultation.')"><i class="fab fa-whatsapp"></i> Book Free Consult</a></div>
+
     </div>
     <div class="view-all-btn"><a href="/services" class="view-all"><span class="en">View All Services</span><span class="hi">सभी सेवाएं देखें</span> <i class="fas fa-arrow-right"></i></a></div>
 </section>

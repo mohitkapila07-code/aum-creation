@@ -99,7 +99,7 @@ footer p{margin-bottom:1.5rem;opacity:.75}
 .footer-links a:hover{color:var(--accent)}
 
 /* page hero (for inner pages) */
-.page-hero{margin-top:75px;background:linear-gradient(135deg,rgba(15,15,15,.5),rgba(30,22,10,.4)),url('images/hero-luxury-bridal.png') center/cover no-repeat;color:var(--white);padding:80px 5%;text-align:center}
+.page-hero{margin-top:75px;background:linear-gradient(135deg,rgba(15,15,15,.5),rgba(30,22,10,.4)),url('/static/images/hero-luxury-bridal.png') center/cover no-repeat;color:var(--white);padding:80px 5%;text-align:center}
 .page-hero h1{font-family:'Playfair Display',serif;font-size:3rem;margin-bottom:1rem}
 .page-hero p{font-size:1.1rem;opacity:.9}
 
