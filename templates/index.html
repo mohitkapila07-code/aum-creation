@@ -91,7 +91,7 @@
         .slider-container{position:relative;width:100%;overflow:hidden;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,.15)}
         .slider-wrapper{display:flex;animation:slide 20s infinite linear}
         .slider-item{min-width:100%;height:400px;object-fit:cover;flex-shrink:0}
-        @keyframes slide{0%{transform:translateX(0)}100%{transform:translateX(-300%)}}
+        @keyframes slide{0%{transform:translateX(0)}100%{transform:translateX(-500%)}}
         .slider-wrapper:hover{animation-play-state:paused}
         .slider-nav{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;padding:0 20px;pointer-events:none;z-index:10}
         .slider-btn{background:rgba(201,168,76,.8);color:var(--white);border:none;width:50px;height:50px;border-radius:50%;font-size:1.2rem;cursor:pointer;transition:all .3s;pointer-events:all}
@@ -148,16 +148,15 @@
     </div>
     <div class="slider-container">
         <div class="slider-wrapper" id="sliderWrapper">
-            <img src="/static/images/design1.jpg" alt="Bridal Design 1" class="slider-item" loading="lazy">
-            <img src="/static/images/design2.jpg" alt="Bridal Design 2" class="slider-item" loading="lazy">
-            <img src="/static/images/design3.jpg" alt="Bridal Design 3" class="slider-item" loading="lazy">
-            <img src="/static/images/design4.jpg" alt="Bridal Design 4" class="slider-item" loading="lazy">
-            <img src="/static/images/design5.jpg" alt="Bridal Design 5" class="slider-item" loading="lazy">
-            <img src="/static/images/design6.jpg" alt="Bridal Design 6" class="slider-item" loading="lazy">
-            <!-- Repeat for infinite scroll -->
-            <img src="/static/images/design1.jpg" alt="Bridal Design 1" class="slider-item" loading="lazy">
-            <img src="/static/images/design2.jpg" alt="Bridal Design 2" class="slider-item" loading="lazy">
-            <img src="/static/images/design3.jpg" alt="Bridal Design 3" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide1.jpg" alt="Bridal Collection 1" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide2.jpg" alt="Bridal Collection 2" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide3.jpg" alt="Bridal Collection 3" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide4.jpg" alt="Bridal Collection 4" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide5.jpg" alt="Bridal Collection 5" class="slider-item" loading="lazy">
+            <!-- duplicates for seamless loop -->
+            <img src="/static/images/hero-slide1.jpg" alt="Bridal Collection 1" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide2.jpg" alt="Bridal Collection 2" class="slider-item" loading="lazy">
+            <img src="/static/images/hero-slide3.jpg" alt="Bridal Collection 3" class="slider-item" loading="lazy">
         </div>
         <div class="slider-nav">
             <button class="slider-btn" id="prevBtn" onclick="moveSlider(-1)"><i class="fas fa-chevron-left"></i></button>
